@@ -13,7 +13,7 @@ const RecipeSearchBar = ({ setRecipes }: { setRecipes: React.Dispatch<React.SetS
 
     try {
       // Make a request to the backend API with the search query
-      const response = await axios.get(`http://localhost:5000/api/recipes/search?query=${searchQuery}`);
+      const response = await axios.get(`${process.env.API_URL}/recipes/search?query=${searchQuery}`);
       setRecipes(response.data); // Update the state with the search results
     } catch (error) {
       console.error("Error searching for recipes:", error);

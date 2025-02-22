@@ -4,6 +4,7 @@ import axios from "axios";
 import RecipeCard from "./RecipeCardComponent";
 import { Recipe } from "../types/types";
 
+
 const RecipeGrid: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -13,7 +14,8 @@ const RecipeGrid: React.FC = () => {
     // Fetch recipes from your API
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/recipes"); // Adjust the URL if necessary
+        console.log(`${process.env.REACT_APP_API_URL}/recipes`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/recipes`); // Adjust the URL if necessary
         setRecipes(response.data);
       } catch (err) {
         setError("Failed to load recipes");

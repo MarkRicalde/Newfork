@@ -40,7 +40,7 @@ const RecipeForm: React.FC = () => {
     try {
       console.log("Submitting");
       console.log(formData);
-      axios.post("http://localhost:5000/api/recipes", formData, {
+      axios.post(`${process.env.REACT_APP_API_URL}`, formData, {
         headers: { "Content-Type": "application/json" }
       });
       alert("Recipe added successfully!");

@@ -23,7 +23,7 @@ const RecipePage: React.FC = () => {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/recipes/${id}`)
+    axios.get(`${process.env.API_URL}/recipes/${id}`)
       .then(response => setRecipe(response.data))
       .catch(error => console.error("Error fetching recipe:", error));
   }, [id]);
