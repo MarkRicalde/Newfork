@@ -1,0 +1,27 @@
+# Node modules (for both frontend and backend)
+node_modules/
+
+# Build output for React (frontend)
+build/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (for both frontend and backend)
+*.env
+
+# Editor/IDE configuration files (for the whole project)
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Yarn lock file (optional)
+yarn.lock
