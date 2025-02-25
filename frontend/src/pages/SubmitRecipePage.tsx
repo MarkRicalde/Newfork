@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import axios from "axios";
+import { addRecipe } from "../api/RecipeApi"
 
 const RecipeForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -38,16 +39,13 @@ const RecipeForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("Submitting");
-      console.log(formData);
-      axios.post(`${process.env.REACT_APP_API_URL}`, formData, {
-        headers: { "Content-Type": "application/json" }
-      });
+      await addRecipe(formData); // Call the AddRecipe function
       alert("Recipe added successfully!");
     } catch (error) {
       console.error("Error adding recipe", error);
     }
   };
+  
 
   return (
     <Grid container spacing={2} justifyContent="center">

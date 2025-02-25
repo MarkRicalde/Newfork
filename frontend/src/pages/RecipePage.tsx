@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { getRecipeById } from "../api/RecipeApi";
+import { Recipe } from "../types/types"
 import { Container, Typography, Card, CardMedia, CardContent, Grid, Chip } from "@mui/material";
-
-interface Recipe {
-  _id: string;
-  name: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
-  prepTime: number;
-  cookingTime: number;
-  servingSize: string;
-  dietaryRestriction?: string[];
-  tags?: string[];
-  rating: number;
-  imageUrl: string;
-}
 
 const RecipePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
 
   useEffect(() => {
-    axios.get(`${process.env.API_URL}/recipes/${id}`)
-      .then(response => setRecipe(response.data))
-      .catch(error => console.error("Error fetching recipe:", error));
+    const fetchRecipe = async () => {
+      try {
+        if (!id) return; // Ensure id is valid before making the call
+        const data = await getRecipeById(id); // Use the provided function
+        setRecipe(data);
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+      }
+    };
+  
+    fetchRecipe();
   }, [id]);
 
   if (!recipe) {

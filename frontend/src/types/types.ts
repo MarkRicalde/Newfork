@@ -1,6 +1,5 @@
 export interface Recipe {
     _id?: any;
-    id: string;
     name: string;
     description: string;
     ingredients: string[];

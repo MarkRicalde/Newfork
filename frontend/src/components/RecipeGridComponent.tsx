@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Grid2 } from "@mui/material"; // Use Grid2 for the new grid system in Material-UI v5
-import axios from "axios";
 import RecipeCard from "./RecipeCardComponent";
 import { Recipe } from "../types/types";
+import { getAllRecipes } from "../api/RecipeApi"
 
 
 const RecipeGrid: React.FC = () => {
@@ -14,9 +14,8 @@ const RecipeGrid: React.FC = () => {
     // Fetch recipes from your API
     const fetchRecipes = async () => {
       try {
-        console.log(`${process.env.REACT_APP_API_URL}/recipes`);
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/recipes`); // Adjust the URL if necessary
-        setRecipes(response.data);
+        const response = await getAllRecipes(); // Adjust the URL if necessary
+        setRecipes(response);
       } catch (err) {
         setError("Failed to load recipes");
         console.error(err);
