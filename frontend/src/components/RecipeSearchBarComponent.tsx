@@ -1,36 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { TextField } from '@mui/material';
+import { Recipe } from '../types/types'; // Import the Recipe type
 
-const RecipeSearchBar = ({ setRecipes }: { setRecipes: React.Dispatch<React.SetStateAction<any[]>> }) => {
+const DEBOUNCETIME = 500;
+
+const RecipeSearchBar: React.FC<{ setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>> }> = ({ setRecipes }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const url = searchQuery
+        ? `${process.env.REACT_APP_API_URL}/recipes/search?query=${searchQuery}`
+        : `${process.env.REACT_APP_API_URL}/recipes/`;  // If searchQuery is empty, fetch all recipes
+
+      try {
+        const response = await axios.get(url);
+        setRecipes(response.data);
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    };
+
+    const debounceTimeout = setTimeout(() => {
+      fetchRecipes();
+    }, DEBOUNCETIME); //Fetch recipes after timing stops for 500
+
+    return () => {
+      clearTimeout(debounceTimeout); // Clear timeout if the user types again
+    };
+  }, [searchQuery, setRecipes]); // Effect runs whenever searchQuery changes
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSearchSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    try {
-      // Make a request to the backend API with the search query
-      const response = await axios.get(`${process.env.API_URL}/recipes/search?query=${searchQuery}`);
-      setRecipes(response.data); // Update the state with the search results
-    } catch (error) {
-      console.error("Error searching for recipes:", error);
-    }
+    setSearchQuery(event.target.value); // Update search query state
   };
 
   return (
-    <form onSubmit={handleSearchSubmit}>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        placeholder="Search for recipes..."
-        className="search-input"
-      />
-      <button type="submit">Search</button>
-    </form>
+    <TextField
+      label="Search for recipes..."
+      variant="outlined"
+      value={searchQuery}
+      onChange={handleSearchChange}
+      style={{ marginBottom: '1rem', width: '40%' }}
+    />
   );
 };
 

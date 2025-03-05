@@ -1,13 +1,13 @@
 .home-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center; /* Ensure the text inside is centered */
-  }
-  
-  .centered-heading {
-    font-size: 2rem; /* Optional: Adjust font size */
-    margin-bottom: 20px; /* Optional: Adjust spacing */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.centered-heading {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
