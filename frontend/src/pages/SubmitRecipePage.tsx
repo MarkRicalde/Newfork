@@ -1,9 +1,14 @@
-import React, { useState } from "react";
-import { TextField, Button, Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
-import axios from "axios";
-import { addRecipe } from "../api/RecipeApi"
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button, Grid, Typography, CircularProgress } from "@mui/material";
+import { addRecipe } from "../api/RecipeApi";
+import { useAuth } from "../hooks/useAuth"; // Import the authentication hook
 
 const RecipeForm: React.FC = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // ✅ Define state at the top level
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -17,6 +22,22 @@ const RecipeForm: React.FC = () => {
     rating: 0,
     imageUrl: "",
   });
+
+  // Redirect to home if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
+
+  // ✅ Early return AFTER hooks (not inside conditions)
+  if (loading) {
+    return (
+      <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
+        <CircularProgress />
+      </Grid>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -39,13 +60,13 @@ const RecipeForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addRecipe(formData); // Call the AddRecipe function
+      await addRecipe(formData);
       alert("Recipe added successfully!");
+      navigate("/"); // Redirect after submission
     } catch (error) {
       console.error("Error adding recipe", error);
     }
   };
-  
 
   return (
     <Grid container spacing={2} justifyContent="center">
