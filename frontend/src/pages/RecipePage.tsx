@@ -1,29 +1,23 @@
-import React, { useEffect, useState } from "react";
+// RecipePage.tsx
+import React from "react";
 import { useParams } from "react-router-dom";
-import { getRecipeById } from "../api/RecipeApi";
-import { Recipe } from "../types/types"
+import { useRecipe } from "../hooks/useRecipe"; // Import the custom hook
 import { Container, Typography, Card, CardMedia, CardContent, Grid, Chip } from "@mui/material";
 
 const RecipePage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const { id } = useParams<{ id: string }>(); // Get the id from URL params
+  const { recipe, loading, error } = useRecipe(id); // Use the custom hook
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        if (!id) return; // Ensure id is valid before making the call
-        const data = await getRecipeById(id); // Use the provided function
-        setRecipe(data);
-      } catch (error) {
-        console.error("Error fetching recipe:", error);
-      }
-    };
-  
-    fetchRecipe();
-  }, [id]);
+  if (loading) {
+    return <Typography variant="h5" align="center">Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography variant="h5" align="center" color="error">{error}</Typography>;
+  }
 
   if (!recipe) {
-    return <Typography variant="h5" align="center">Loading...</Typography>;
+    return <Typography variant="h5" align="center">Recipe not found</Typography>;
   }
 
   return (
@@ -42,7 +36,7 @@ const RecipePage: React.FC = () => {
           <Typography variant="body1" color="textSecondary" gutterBottom>
             {recipe.description}
           </Typography>
-          
+
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={6}>
               <Typography variant="h6">Prep Time:</Typography>
@@ -57,21 +51,21 @@ const RecipePage: React.FC = () => {
               <Typography>{recipe.servingSize}</Typography>
             </Grid>
           </Grid>
-          
+
           <Typography variant="h6" sx={{ mt: 3 }}>Ingredients:</Typography>
-          <ul >
+          <ul>
             {recipe.ingredients.map((ingredient, index) => (
               <li key={index} style={{ fontFamily: 'Arial, sans-serif' }}> {ingredient}</li>
             ))}
           </ul>
-          
+
           <Typography variant="h6" sx={{ mt: 3 }}>Instructions:</Typography>
           <ol>
             {recipe.instructions.map((step, index) => (
               <li key={index} style={{ fontFamily: 'Arial, sans-serif' }}>{step}</li>
             ))}
           </ol>
-          
+
           {recipe.dietaryRestriction && recipe.dietaryRestriction.length > 0 && (
             <>
               <Typography variant="h6" sx={{ mt: 3 }}>Dietary Restrictions:</Typography>
@@ -80,7 +74,7 @@ const RecipePage: React.FC = () => {
               ))}
             </>
           )}
-          
+
           {recipe.tags && recipe.tags.length > 0 && (
             <>
               <Typography variant="h6" sx={{ mt: 3 }}>Tags:</Typography>
@@ -89,7 +83,7 @@ const RecipePage: React.FC = () => {
               ))}
             </>
           )}
-          
+
           <Typography variant="h6" sx={{ mt: 3 }}>Rating:</Typography>
           <Typography>{recipe.rating} / 5</Typography>
         </CardContent>

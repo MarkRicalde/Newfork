@@ -1,37 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import RecipeSearchBar from '../components/RecipeSearchBarComponent';
 import RecipeGrid from '../components/RecipeGridComponent';
-import { Recipe } from '../types/types'; //
-import { getAllRecipes } from '../api/RecipeApi';
-import "../styles/HomePage.css"
+import { useRecipeSearch } from '../hooks/useRecipeSearch';
+import "../styles/HomePage.css";
 
 const Homepage: React.FC = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await getAllRecipes(); // Fetch all recipes
-        setRecipes(response);
-      } catch (err) {
-        setError('Failed to load recipes');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecipes();
-  }, []);
+  const { recipes, searchQuery, setSearchQuery, loading, error } = useRecipeSearch();
 
   return (
     <div className="home-page-container">
       <h1 className="centered-heading" style={{ fontFamily: 'Arial, sans-serif' }}>
         Newfork
       </h1>
-      <RecipeSearchBar setRecipes={setRecipes}/>
+      <RecipeSearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       {loading ? (
         <div>Loading...</div>

@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 import recipeRoutes from "./routes/RecipeRoutes";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config({ path: '../.env' }); // Load environment variables from .env file
 const app = express();
 
 // Middleware

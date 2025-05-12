@@ -1,19 +1,20 @@
-import { AppBar, Toolbar, Typography, Button, Avatar } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Avatar, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";
-import { signInWithGoogle, logout, auth } from "../firebase/firebase";
-import { useState, useEffect } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading, signInWithGoogle, logout } = useAuth(); // Use the custom hook
 
-  // Listen for authentication state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  // If loading, show a spinner
+  if (loading) {
+    return (
+      <AppBar position="static">
+        <Toolbar>
+          <CircularProgress color="inherit" />
+        </Toolbar>
+      </AppBar>
+    );
+  }
 
   return (
     <AppBar position="static">
@@ -26,12 +27,10 @@ const Navbar = () => {
         </Button>
         {user ? (
           <Button color="inherit" component={Link} to="/add-recipe">
-          Submit Recipe
+            Submit Recipe
           </Button>
-        ) : (<></>)}
+        ) : null}
 
-
-        
         {user ? (
           <>
             <Avatar src={user.photoURL || ""} sx={{ width: 32, height: 32, ml: 2 }} />

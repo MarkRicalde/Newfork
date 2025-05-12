@@ -1,27 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Grid, Typography, CircularProgress } from "@mui/material";
-import { addRecipe } from "../api/RecipeApi";
 import { useAuth } from "../hooks/useAuth"; // Import the authentication hook
+import { useRecipeForm } from "../hooks/useRecipeForm"; // Import the recipe form hook
+import { useSubmitRecipe } from "../hooks/useSubmitRecipe"; // Import the submit recipe hook
 
 const RecipeForm: React.FC = () => {
   const { user, loading } = useAuth();
+  const { formData, handleChange, handleArrayChange, addArrayField } = useRecipeForm();
+  const { handleSubmit } = useSubmitRecipe(formData); // Use the submit recipe hook
   const navigate = useNavigate();
-
-  // ✅ Define state at the top level
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    ingredients: [""],
-    instructions: [""],
-    prepTime: 0,
-    cookingTime: 0,
-    servingSize: "",
-    dietaryRestriction: [] as string[],
-    tags: [] as string[],
-    rating: 0,
-    imageUrl: "",
-  });
 
   // Redirect to home if not logged in
   useEffect(() => {
@@ -30,7 +18,6 @@ const RecipeForm: React.FC = () => {
     }
   }, [user, loading, navigate]);
 
-  // ✅ Early return AFTER hooks (not inside conditions)
   if (loading) {
     return (
       <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
@@ -38,35 +25,6 @@ const RecipeForm: React.FC = () => {
       </Grid>
     );
   }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleArrayChange = (index: number, field: "ingredients" | "instructions", value: string) => {
-    const updatedArray = [...formData[field]];
-    updatedArray[index] = value;
-    setFormData((prevData) => ({ ...prevData, [field]: updatedArray }));
-  };
-
-  const addArrayField = (field: "ingredients" | "instructions") => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [field]: [...prevData[field], ""],
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await addRecipe(formData);
-      alert("Recipe added successfully!");
-      navigate("/"); // Redirect after submission
-    } catch (error) {
-      console.error("Error adding recipe", error);
-    }
-  };
 
   return (
     <Grid container spacing={2} justifyContent="center">
@@ -121,9 +79,9 @@ const RecipeForm: React.FC = () => {
 
           <TextField fullWidth label="Image URL" name="imageUrl" value={formData.imageUrl} onChange={handleChange} margin="normal" />
 
-          <TextField fullWidth label="Tags (comma-separated)" name="tags" value={formData.tags.join(", ")} onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(", ") })} margin="normal" />
+          <TextField fullWidth label="Tags (comma-separated)" name="tags" value={formData.tags.join(", ")} onChange={(e) => handleChange(e)} margin="normal" />
 
-          <TextField fullWidth label="Dietary Restrictions (comma-separated)" name="dietaryRestriction" value={formData.dietaryRestriction.join(", ")} onChange={(e) => setFormData({ ...formData, dietaryRestriction: e.target.value.split(", ") })} margin="normal" />
+          <TextField fullWidth label="Dietary Restrictions (comma-separated)" name="dietaryRestriction" value={formData.dietaryRestriction.join(", ")} onChange={(e) => handleChange(e)} margin="normal" />
 
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Submit Recipe
